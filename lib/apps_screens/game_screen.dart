@@ -22,55 +22,80 @@ class _gameState extends State<game> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      navigatorKey: navigatorKey,
-      home: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text("Rules"),
-          backgroundColor: Colors.red,
-        ),
-        body: Container(
-          color: Colors.black,
-          alignment: Alignment.center,
-          child:Center(child:
-              Stack(children: [Image.asset('images/image.png'), _Tiles()]),
-        ),
-      ),
-    ));
+        debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
+        home: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text("Game in Progress"),
+            backgroundColor: Colors.red,
+          ),
+          body: Container(
+            color: Colors.black,
+            alignment: Alignment.center,
+            child: Center(child:
+            Stack(children: [Image.asset('images/image.png'),
+              _Tiles(),
+              Padding(
+                  padding: EdgeInsets.only(top: 420, left: 30),
+                  child: Expanded(child: RaisedButton(
+                    color: Colors.red,
+                    child: Text("Reset Board",
+                        style: TextStyle(
+                            fontSize: 40.0,
+                            color: Colors.black,
+                            fontFamily: 'AUTOMANI')
+                    ),
+                    onPressed: () {
+                      _resetGame();
+                    },
+                  )))
+            ]),
+            ),
+          ),
+        ));
   }
 
   Widget _Tiles() {
     return Builder(builder: (context) {
-      final boardDimension = MediaQuery.of(context).size.width;
+      final boardDimension = MediaQuery
+          .of(context)
+          .size
+          .width;
       final tileDimension = boardDimension / 3;
 
       return Container(
           width: boardDimension,
           height: boardDimension,
           child: Column(
-              children: chunk(_boardState, 3).asMap().entries.map((entry) {
-            final chunkIndex = entry.key;
-            final tileStateChunk = entry.value;
+              children: chunk(_boardState, 3)
+                  .asMap()
+                  .entries
+                  .map((entry) {
+                final chunkIndex = entry.key;
+                final tileStateChunk = entry.value;
 
-            return Row(
-              children: tileStateChunk.asMap().entries.map((innerEntry) {
-                final innerIndex = innerEntry.key;
-                final tileState = innerEntry.value;
-                final tileIndex = (chunkIndex * 3) + innerIndex;
+                return Row(
+                  children: tileStateChunk
+                      .asMap()
+                      .entries
+                      .map((innerEntry) {
+                    final innerIndex = innerEntry.key;
+                    final tileState = innerEntry.value;
+                    final tileIndex = (chunkIndex * 3) + innerIndex;
 
-                return tilestwo(
-                  tileState: tileState,
-                  dimension: tileDimension,
-                  onPressed: () => _turn(tileIndex),
+                    return tilestwo(
+                      tileState: tileState,
+                      dimension: tileDimension,
+                      onPressed: () => _turn(tileIndex),
+                    );
+                  }).toList(),
                 );
-              }).toList(),
-            );
-          }).toList()));
+              }).toList()));
     });
   }
 
-  void _turn (int selectedIndex) {
+  void _turn(int selectedIndex) {
     if (_boardState[selectedIndex] == TileState.EMPTY) {
       setState(() {
         _boardState[selectedIndex] = _currentTurn;
@@ -79,13 +104,17 @@ class _gameState extends State<game> {
             : TileState.CROSS;
       });
 
-      final winner = _Winner();
-      if (winner != TileState.NULL) {
-        print('Winner is: $winner');
-        _WinnerDialog(winner);
+      final winnerr = _Winner();
+      if (winnerr != TileState.NULL) {
+        print('Winner is: $winnerr');
+        _WinnerDialog(winnerr);
       }
+      // // if ((winnerr != TileState.CROSS)
+      // // && (winnerr != TileState.CIRCLE)){
+      // //   checkdraw();
+      // }
     }
-  }
+    }
 
   TileState _Winner() {
     TileState Function(int, int, int) winnerForMatch = (a, b, c) {
@@ -111,11 +140,12 @@ class _gameState extends State<game> {
 
     late TileState winner;
     for (int i = 0; i < checks.length; i++) {
-      if (checks[i] !=TileState.NULL) {
+      if (checks[i] != TileState.NULL) {
         winner = checks[i];
         break;
       }
     }
+
 
     return winner;
   }
@@ -146,4 +176,39 @@ class _gameState extends State<game> {
       _currentTurn = TileState.CROSS;
     });
   }
+
+  // void checkdraw() {
+  //   if ((_boardState[0] != TileState.EMPTY)
+  //       && (_boardState[1] != TileState.EMPTY)
+  //       && (_boardState[2] != TileState.EMPTY)
+  //       && (_boardState[3] != TileState.EMPTY)
+  //       && (_boardState[4] != TileState.EMPTY)
+  //       && (_boardState[5] != TileState.EMPTY)
+  //       && (_boardState[6] != TileState.EMPTY)
+  //       && (_boardState[7] != TileState.EMPTY)
+  //       && (_boardState[8]!=TileState.EMPTY))
+  //       {
+  //     return _drawdialog();
+  //   }
+  // }
+  // void _drawdialog() {
+  //   showDialog(
+  //       context: context,
+  //       builder: (_) {
+  //         return AlertDialog(
+  //           title: Text('Draw'),
+  //           content: Image.asset('images/draw.png'
+  //           ),
+  //           actions: [
+  //             FlatButton(
+  //                 onPressed: () {
+  //                   _resetGame();
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text('New Game'))
+  //           ],
+  //         );
+  //       });
+  //
+  // }
 }
